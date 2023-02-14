@@ -23,7 +23,7 @@ public class Main {
         int winProbability1 = 0;
         int winProbability2 = 0;
 
-        System.out.println("Bienvenido, ingrese el nombre del torneo:");
+        System.out.println("Bienvenido! Ingrese el nombre del torneo:");
         String nameTournament = sc.nextLine();
 
         System.out.println("Ingrese nombre del jugador: ");
