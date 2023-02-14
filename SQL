@@ -1,0 +1,90 @@
+--Creacion de la base de datos
+CREATE DATABASE DUX
+
+USE DUX
+GO
+
+CREATE TABLE RUBRO
+(
+	id_rubro bigint IDENTITY,
+	rubro VARCHAR (50)
+
+	CONSTRAINT PK_RUBRO PRIMARY KEY (id_rubro)
+
+)
+
+CREATE TABLE PRODUCTO
+(
+	codigo VARCHAR(20),
+	nombre VARCHAR(50),
+	fecha_creacion DATE,
+	id_rubro BIGINT
+
+	CONSTRAINT PK_PRODUCTO PRIMARY KEY (codigo)
+
+	CONSTRAINT FK_RUBRO_PRODUCTO FOREIGN KEY(id_rubro)
+	REFERENCES RUBRO(id_rubro)
+
+)
+
+CREATE TABLE CLIENTE
+(
+	id_cliente BIGINT IDENTITY,
+	nombre VARCHAR(50),
+	apellido VARCHAR(50),
+	cuit DATE
+
+	CONSTRAINT PK_CLIENTE PRIMARY KEY(id_cliente)
+
+)
+
+CREATE TABLE VENTA
+(
+	id_venta BIGINT IDENTITY,
+	codigo_producto VARCHAR(20),
+	fecha DATE,
+	cantidad BIGINT,
+	precio_unitario DECIMAL(6,2),
+	id_cliente BIGINT
+
+	CONSTRAINT PK_VENTA PRIMARY KEY(id_venta)
+
+	CONSTRAINT FK_PRODUCTO FOREIGN KEY(codigo_producto)
+	REFERENCES PRODUCTO(codigo),
+
+	CONSTRAINT FK_CLIENTE FOREIGN KEY(id_cliente)
+	REFERENCES CLIENTE(id_cliente)
+)
+
+--CONSULTAS
+
+--Todos los productos del rubro "librería", creados hoy.
+SELECT p.nombre, p.fecha_creacion, r.rubro FROM PRODUCTO p JOIN RUBRO r ON p.id_rubro = r.id_rubro
+WHERE rubro = 'libreria' AND fecha_creacion = CONVERT(DATE, GETDATE()) 
+
+--Monto total vendido por cliente (mostrar nombre del cliente y monto).
+SELECT c.nombre , SUM(v.cantidad * v.precio_unitario) total FROM VENTA v JOIN CLIENTE c ON v.id_cliente = c.id_cliente
+GROUP BY c.nombre, c.id_cliente
+
+--Cantidad de ventas por producto.
+SELECT p.codigo, p.nombre, SUM(v.cantidad) cantidad
+FROM VENTA v JOIN PRODUCTO p ON v.codigo_producto = p.codigo
+GROUP BY p.codigo, p.nombre
+
+--Cantidad de productos comprados por cliente en el mes actual.
+SELECT c.nombre +' '+ c.apellido cliente, SUM (v.cantidad) AS 'cantidad de productos' 
+FROM PRODUCTO p JOIN VENTA v ON p.codigo = v.codigo_producto JOIN CLIENTE c ON v.id_cliente = c.id_cliente
+WHERE  DATEPART(mm, v.fecha) = DATEPART(mm, getdate())
+GROUP BY c.nombre, c.apellido
+
+--Ventas que tienen al menos un producto del rubro "bazar".
+SELECT v.codigo_producto, v.cantidad, r.rubro 
+FROM VENTA v JOIN PRODUCTO p ON v.codigo_producto = p.codigo JOIN RUBRO r ON p.id_rubro = r.id_rubro
+WHERE p.codigo = ANY(SELECT codigo
+					 FROM PRODUCTO p JOIN RUBRO r ON p.id_rubro = r.id_rubro
+					 WHERE r.rubro = 'bazar')
+
+--Rubros que no tienen ventas en los últimos 2 meses.
+SELECT r.id_rubro, r.rubro
+FROM VENTA v JOIN PRODUCTO p ON v.codigo_producto = p.codigo JOIN RUBRO r ON p.id_rubro = r.id_rubro
+WHERE NOT EXISTS (SELECT * FROM RUBRO WHERE id_rubro = r.id_rubro) AND v.fecha >= DATEADD(month, -2, GETDATE())
