@@ -3,7 +3,6 @@ package tournament;
 public class Match {
     private String nameTournament;
     private int set;
-    private int game;
 
     public Match(String nameTournament, int set) {
         this.nameTournament = nameTournament;
@@ -24,13 +23,5 @@ public class Match {
 
     public void setSet(int set) {
         this.set = set;
-    }
-
-    public int getGame() {
-        return game;
-    }
-
-    public void setGame(int game) {
-        this.game = game;
     }
 }

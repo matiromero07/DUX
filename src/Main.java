@@ -22,6 +22,8 @@ public class Main {
         int cantSet = 0;
         int winProbability1 = 0;
         int winProbability2 = 0;
+        int winner = 0;
+
 
         System.out.println("Bienvenido! Ingrese el nombre del torneo:");
         String nameTournament = sc.nextLine();
@@ -33,6 +35,7 @@ public class Main {
 
         //Validar que la probabilidad este entre 0 y 100
         while(!ban1) {
+
             winProbability1 = sc.nextInt();
 
             if(winProbability1 > 0 && winProbability1 <= 100){
@@ -63,7 +66,7 @@ public class Main {
                     break;
 
                 default:
-                    System.out.println("Elija una opción válida");
+                    System.out.println("Elija una opción válida: ");
             }
 
         }
@@ -90,7 +93,6 @@ public class Main {
 
 
             while (cantSet1 < cantSet && cantSet2 < cantSet) {
-                int winner = 0;
 
                 int random = (int) Math.floor(Math.random() * 100);
 
@@ -101,9 +103,10 @@ public class Main {
                     winner = 1;
                 }
 
-
                 // (Winner = 0: Jugador 1) | (Winner = 1: Jugador 2)
                 if (winner == 0) {
+
+                    //Jugador 1
 
                     //Suma de puntos
                     if (cantPoints == 30) {
@@ -120,7 +123,7 @@ public class Main {
 
 
                     //Cuando el game llega a 6 se suma un set y se vuelven a 0 los puntos
-                    if (cantGame == 6) {
+                    if (cantGame == 6 && cantPoints == 40) {
                         cantSet1++;
                         cantGame = 0;
                         cantPoints = 0;
@@ -178,6 +181,7 @@ public class Main {
                     }
 
                 } else {
+                    //Jugador 2
 
                     if (cantPoints2 == 30) {
                         cantPoints2 = cantPoints2 + 10;
@@ -191,7 +195,7 @@ public class Main {
                             p2.getName() + " |  " + cantPoints2 + "      |  " + cantGame2 + "   |   " + cantSet2 + "   | -\n" +
                             "____________________________________________");
 
-                    if (cantGame2 == 6) {
+                    if (cantGame2 == 6 && cantPoints2 == 40) {
                         cantSet2++;
                         cantGame2 = 0;
                         cantPoints = 0;
