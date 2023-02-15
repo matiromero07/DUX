@@ -24,7 +24,6 @@ public class Main {
         int winProbability2 = 0;
         int winner = 0;
 
-
         System.out.println("Bienvenido! Ingrese el nombre del torneo:");
         String nameTournament = sc.nextLine();
 
@@ -34,14 +33,14 @@ public class Main {
         System.out.println("Ingrese la probabilidad de que el jugador 1 gane");
 
         //Validar que la probabilidad este entre 0 y 100
-        while(!ban1) {
+        while (!ban1) {
 
             winProbability1 = sc.nextInt();
 
-            if(winProbability1 > 0 && winProbability1 <= 100){
+            if (winProbability1 > 0 && winProbability1 <= 100) {
                 winProbability2 = 100 - winProbability1;
                 ban1 = true;
-            }else{
+            } else {
                 System.out.println("Ingrese una probabilidad entre 0 y 100%: ");
             }
         }
@@ -108,11 +107,80 @@ public class Main {
 
                     //Jugador 1
 
-                    //Suma de puntos
-                    if (cantPoints == 30) {
-                        cantPoints = cantPoints + 10;
+                    if (cantPoints == 40 && cantPoints2 == 40) {
+
+                        cantPointsAD1 = 0;
+                        cantPointsAD2 = 0;
+
+                        //Mientras la cantidad de puntos de ventaja sean distintos de 2 va a seguir el AD
+                        while (cantPointsAD1 != 2 || cantPointsAD2 != 2) {
+
+                            //Se genera un nuevo ganador
+                            int random2 = (int) Math.floor(Math.random() * 100);
+
+                            if (random2 < winProbability1) {
+                                winner = 0;
+                            } else {
+                                winner = 1;
+                            }
+
+                            if (winner == 0) {
+                                //Se suma un punto al jugador 1, y se saca los puntos que tenga el jugador 2
+                                //De esta forma se valida que sean puntos consecutivos
+                                cantPointsAD1++;
+                                cantPointsAD2 = 0;
+
+                                System.out.println(m.getNameTournament() + "\n" +
+                                        "Player  |  Points  |  Game  |  Set  |\n" +
+                                        p1.getName() + " |  " + cantPointsAD1 + "      |   " + cantGame + "    |   " + cantSet1 + "   | AD\n" +
+                                        p2.getName() + " |  " + cantPointsAD2 + "      |  " + cantGame2 + "   |   " + cantSet2 + "   |\n" +
+                                        "____________________________________________");
+
+                                //Si los puntos del jugador 1, llega a 2 puntos consecutivos gana el AD
+                                if (cantPointsAD1 == 2) {
+                                    cantGame++;
+                                    cantPoints = 0;
+                                    cantPoints2 = 0;
+                                    cantPointsAD2 = 2;
+                                }
+
+                            } else {
+                                cantPointsAD2++;
+                                cantPointsAD1 = 0;
+
+                                System.out.println(m.getNameTournament() + "\n" +
+                                        "Player  |  Points  |  Game  |  Set  |\n" +
+                                        p1.getName() + " |  " + cantPointsAD1 + "      |   " + cantGame + "    |   " + cantSet1 + "   | \n" +
+                                        p2.getName() + " |  " + cantPointsAD2 + "      |  " + cantGame2 + "   |   " + cantSet2 + "   | AD\n" +
+                                        "____________________________________________");
+
+                                if (cantPointsAD2 == 2) {
+                                    cantGame2++;
+                                    cantPoints = 0;
+                                    cantPoints2 = 0;
+                                    cantPointsAD1 = 2;
+                                }
+
+                            }
+                        }
+
                     } else {
-                        cantPoints = cantPoints + 15;
+
+                        //Si no empataron 40-40 se suman los puntos normalmente
+                        if (cantPoints == 40) {
+                            cantGame++;
+                            cantPoints = 0;
+                            cantPoints2 = 0;
+
+
+                        }
+
+                        if (cantPoints == 30) {
+                            cantPoints = cantPoints + 10;
+                        } else {
+                            cantPoints = cantPoints + 15;
+                        }
+
                     }
 
                     System.out.println(m.getNameTournament() + "\n" +
@@ -128,32 +196,6 @@ public class Main {
                         cantGame = 0;
                         cantPoints = 0;
                         cantPoints2 = 0;
-                    }
-
-                    //Cuando los puntos llegan a 40 se suma un game y se vuelven a 0 los puntos
-                    //Si estan 40-40 se va al adicional
-                    if (cantPoints == 40) {
-                        if (cantPoints2 == 40) {
-
-                            //Se genera nuevamente un aleatorio para ver quien gana el AD
-                            winner = (int) Math.floor(Math.random() * 2);
-
-                            //Cuando estan 40 - 40, el que hace 2 puntos seguidos gana el game
-                            while (cantPointsAD1 != 2 || cantPointsAD2 != 2) {
-                                if (winner == 0) {
-                                    cantPointsAD1++;
-                                    cantPointsAD2 = 0; // se pone en 0 a los puntos del segundo jugador para corroborar que sean 2 puntos seguidos
-                                } else {
-                                    cantPointsAD2++;
-                                    cantPointsAD1 = 0;
-                                }
-                            }
-
-                        } else {
-                            cantPoints = 0;
-                            cantGame++;
-                            cantPoints2 = 0;
-                        }
                     }
 
                     //Si se eligió jugar a 3 set
@@ -181,12 +223,69 @@ public class Main {
                     }
 
                 } else {
+
                     //Jugador 2
 
-                    if (cantPoints2 == 30) {
-                        cantPoints2 = cantPoints2 + 10;
+                    if (cantPoints == 40 && cantPoints2 == 40) {
+
+                        cantPointsAD1 = 0;
+                        cantPointsAD2 = 0;
+
+                        while (cantPointsAD1 != 2 || cantPointsAD2 != 2) {
+
+                            winner = (int) Math.floor(Math.random() * 2);
+
+                            if (winner == 0) {
+                                cantPointsAD1++;
+                                cantPointsAD2 = 0;
+
+                                System.out.println(m.getNameTournament() + "\n" +
+                                        "Player  |  Points  |  Game  |  Set  |\n" +
+                                        p1.getName() + " |  " + cantPointsAD1 + "      |   " + cantGame + "    |   " + cantSet1 + "   | AD\n" +
+                                        p2.getName() + " |  " + cantPointsAD2 + "      |  " + cantGame2 + "   |   " + cantSet2 + "   |\n" +
+                                        "____________________________________________");
+
+                                if (cantPointsAD1 == 2) {
+                                    cantGame++;
+                                    cantPoints = 0;
+                                    cantPoints2 = 0;
+                                    cantPointsAD2 = 2;
+                                }
+
+                            } else {
+                                cantPointsAD2++;
+                                cantPointsAD1 = 0;
+
+                                System.out.println(m.getNameTournament() + "\n" +
+                                        "Player  |  Points  |  Game  |  Set  |\n" +
+                                        p1.getName() + " |  " + cantPointsAD1 + "      |   " + cantGame + "    |   " + cantSet1 + "   | \n" +
+                                        p2.getName() + " |  " + cantPointsAD2 + "      |  " + cantGame2 + "   |   " + cantSet2 + "   | AD\n" +
+                                        "____________________________________________");
+
+                                if (cantPointsAD2 == 2) {
+                                    cantGame2++;
+                                    cantPoints = 0;
+                                    cantPoints2 = 0;
+                                    cantPointsAD1 = 2;
+                                }
+
+                            }
+                        }
+
                     } else {
-                        cantPoints2 = cantPoints2 + 15;
+
+                        if (cantPoints2 == 40) {
+                            cantGame2++;
+                            cantPoints = 0;
+                            cantPoints2 = 0;
+                        }
+
+                        if (cantPoints2 == 30) {
+                            cantPoints2 = cantPoints2 + 10;
+                        } else {
+                            cantPoints2 = cantPoints2 + 15;
+                        }
+
                     }
 
                     System.out.println(m.getNameTournament() + "\n" +
@@ -200,26 +299,6 @@ public class Main {
                         cantGame2 = 0;
                         cantPoints = 0;
                         cantPoints2 = 0;
-                    }
-
-                    if (cantPoints2 == 40) {
-                        if (cantPoints == 40) {
-                            winner = (int) Math.floor(Math.random() * 2);
-
-                            while (cantPointsAD1 != 2 || cantPointsAD2 != 2) {
-                                if (winner == 0) {
-                                    cantPointsAD1++;
-                                    cantPointsAD2 = 0;
-                                } else {
-                                    cantPointsAD2++;
-                                    cantPointsAD1 = 0;
-                                }
-                            }
-                        } else {
-                            cantPoints2 = 0;
-                            cantGame2++;
-                            cantPoints = 0;
-                        }
                     }
 
                     if (cantSet == 3) {
@@ -269,6 +348,5 @@ public class Main {
             }
             ban2 = false;
         }
-
     }
 }

@@ -4,8 +4,6 @@ public class Player {
     private String name;
     private double winProbability;
 
-
-
     public Player(String name, double winProbability) {
         this.name = name;
         this.winProbability = winProbability;
